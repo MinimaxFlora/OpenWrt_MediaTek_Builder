@@ -1,19 +1,24 @@
 #!/bin/bash
 
+# 修改主机名称
+sed -i 's/ImmortalWrt/ZeroWrt/g' package/base-files/files/bin/config_generate
+
 # 修改默认IP
-sed -i 's/192.168.6.1/10.0.0.1/g' package/base-files/files/bin/config_generate
-sed -i 's/192.168.110.1/10.0.0.1/g' package/base-files/files/bin/config_generate
+sed -i 's/192.168.1.1/10.0.0.1/g' package/base-files/files/bin/config_generate
 
 # 更改默认 Shell 为 zsh
 # sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
 
 # TTYD 免登录
 sed -i 's|/bin/login|/bin/login -f root|g' feeds/packages/utils/ttyd/files/ttyd.config
+sed -i 's/services/system/g' feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/luci-app-ttyd.json
+sed -i '3 a\\t\t"order": 50,' feeds/luci/applications/luci-app-ttyd/root/usr/share/luci/menu.d/luci-app-ttyd.json
+sed -i 's/procd_set_param stdout 1/procd_set_param stdout 0/g' feeds/packages/utils/ttyd/files/ttyd.init
+sed -i 's/procd_set_param stderr 1/procd_set_param stderr 0/g' feeds/packages/utils/ttyd/files/ttyd.init
 
 # WiFi 设置
-sed -i 's/ssid="ImmortalWrt-2.4G"/ssid="ZeroWrt-2.4G"/g; s/ssid="ImmortalWrt-5G"/ssid="ZeroWrt-5G"/g' package/mtk/applications/mtwifi-cfg/files/mtwifi.sh
-sed -i 's/set wireless\.default_${dev}\.encryption=none/set wireless.default_${dev}.encryption=psk2/g' package/mtk/applications/mtwifi-cfg/files/mtwifi.sh
-sed -i '/set wireless\.default_${dev}\.encryption=psk2/a\					set wireless.default_${dev}.key=1234567890' package/mtk/applications/mtwifi-cfg/files/mtwifi.sh
+sed -i 's/ImmortalWrt-/ZeroWrt-/g' package/mtk/applications/mtwifi-cfg-ucode/files/lib/wifi/mtwifi.uc
+sed -i 's|        "encryption": "none"|        "encryption": "psk2",\n        "key": "1234567890"|' package/mtk/applications/mtwifi-cfg-ucode/files/lib/wifi/mtwifi.uc
 
 # 版本设置
 sed -i 's/VERSION_DIST:=$(if $(VERSION_DIST),$(VERSION_DIST),ImmortalWrt)/VERSION_DIST:=$(if $(VERSION_DIST),$(VERSION_DIST),ZeroWrt)/' include/version.mk
@@ -23,8 +28,8 @@ sed -i 's/VERSION_MANUFACTURER:=$(if $(VERSION_MANUFACTURER),$(VERSION_MANUFACTU
 rm -rf feeds/luci/themes/luci-theme-argon
 rm -rf feeds/packages/lang/{golang,rust,node}
 rm -rf feeds/packages/utils/{docker,dockerd,containerd,runc}
-rm -rf feeds/packages/net/{open-app-filter,xray-core,v2ray-geodata,sing-box,chinadns-ng,dns2socks,hysteria,ipt2socks,mosdns,microsocks,naiveproxy,shadowsocks-libev,shadowsocks-rust,shadowsocksr-libev,simple-obfs,tcping,trojan-plus,tuic-client,v2ray-plugin,xray-plugin,geoview,shadow-tls}
-rm -rf feeds/luci/applications/{luci-app-argon-config,luci-app-appfilter,luci-app-diskman,luci-app-dockerman,luci-app-homeproxy,luci-app-openclash,luci-app-openlist,luci-app-passwall,luci-app-ramfree,luci-app-radicale3}
+rm -rf feeds/packages/net/{open-app-filter,xray-core,v2ray-geodata,sing-box,chinadns-ng,dns2socks,hysteria,ipt2socks,mosdns,microsocks,naiveproxy,open-app-filter,shadowsocks-libev,shadowsocks-rust,shadowsocksr-libev,simple-obfs,tcping,trojan-plus,tuic-client,v2ray-plugin,xray-plugin,geoview,shadow-tls}
+rm -rf feeds/luci/applications/{luci-app-argon-config,luci-app-appfilter,luci-app-diskman,luci-app-dockerman,luci-app-homeproxy,luci-app-openclash,luci-app-openlist,luci-app-passwall,luci-app-ramfree}
 
 # Go 1.26
 git clone --depth=1 -b 26.x https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
@@ -38,7 +43,6 @@ git clone --depth=1 -b packages-25.12 https://github.com/sbwml/feeds_packages_la
 
 # 我的插件源
 git clone --depth=1 https://github.com/MinimaxFlora/openwrt_package package/new/helloworld && rm -rf package/new/helloworld/autocore
-sed -i 's/LUCI_DEPENDS:=+USE_APK:wget-any +!USE_APK:wget +jsonfilter/LUCI_DEPENDS:=+wget +jsonfilter/' package/new/helloworld/luci-theme-argon/Makefile
 
 # Docker
 git clone --depth=1 -b openwrt-25.12 https://github.com/sbwml/luci-app-dockerman feeds/luci/applications/luci-app-dockerman
