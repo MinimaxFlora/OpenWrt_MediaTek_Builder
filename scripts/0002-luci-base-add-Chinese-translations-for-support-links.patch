@@ -28,5 +28,8 @@ index cabaea73ab..da88c276c3 100644
 +
 +msgid "Donation Address"
 +msgstr "捐赠地址"
++
++msgid "CPU usage"
++msgstr "CPU 使用率"
 -- 
 2.43.0
