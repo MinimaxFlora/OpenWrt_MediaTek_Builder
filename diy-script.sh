@@ -37,7 +37,7 @@ rm -rf feeds/packages/lang/node
 git clone --depth=1 -b packages-25.12 https://github.com/sbwml/feeds_packages_lang_node feeds/packages/lang/node
 
 # 我的插件源
-git clone --depth=1 https://github.com/MinimaxFlora/openwrt_package package/new/helloworld
+git clone --depth=1 https://github.com/MinimaxFlora/openwrt_package package/new/helloworld && rm -rf package/new/helloworld/autocore
 sed -i 's/LUCI_DEPENDS:=+USE_APK:wget-any +!USE_APK:wget +jsonfilter/LUCI_DEPENDS:=+wget +jsonfilter/' package/new/helloworld/luci-theme-argon/Makefile
 
 # Docker
