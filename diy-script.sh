@@ -20,8 +20,9 @@ sed -i 's/VERSION_DIST:=$(if $(VERSION_DIST),$(VERSION_DIST),ImmortalWrt)/VERSIO
 sed -i 's/VERSION_MANUFACTURER:=$(if $(VERSION_MANUFACTURER),$(VERSION_MANUFACTURER),ImmortalWrt)/VERSION_MANUFACTURER:=$(if $(VERSION_MANUFACTURER),$(VERSION_MANUFACTURER),ZeroWrt)/' include/version.mk
 
 # 移除要替换的包
-rm -rf feeds/packages/lang/{golang,rust,node}
 rm -rf feeds/luci/themes/luci-theme-argon
+rm -rf feeds/packages/lang/{golang,rust,node}
+rm -rf feeds/packages/utils/{docker,dockerd,containerd,runc}
 rm -rf feeds/packages/net/{open-app-filter,xray-core,v2ray-geodata,sing-box,chinadns-ng,dns2socks,hysteria,ipt2socks,mosdns,microsocks,naiveproxy,shadowsocks-libev,shadowsocks-rust,shadowsocksr-libev,simple-obfs,tcping,trojan-plus,tuic-client,v2ray-plugin,xray-plugin,geoview,shadow-tls}
 rm -rf feeds/luci/applications/{luci-app-argon-config,luci-app-appfilter,luci-app-diskman,luci-app-dockerman,luci-app-homeproxy,luci-app-openclash,luci-app-openlist,luci-app-passwall,luci-app-ramfree}
 
@@ -37,6 +38,13 @@ git clone --depth=1 -b packages-25.12 https://github.com/sbwml/feeds_packages_la
 
 # 我的插件源
 git clone --depth=1 https://github.com/MinimaxFlora/openwrt_package package/new/helloworld
+
+# Docker
+git clone --depth=1 -b openwrt-25.12 https://github.com/sbwml/luci-app-dockerman feeds/luci/applications/luci-app-dockerman
+git clone --depth=1 https://github.com/sbwml/packages_utils_docker feeds/packages/utils/docker
+git clone --depth=1 https://github.com/sbwml/packages_utils_dockerd feeds/packages/utils/dockerd
+git clone --depth=1 https://github.com/sbwml/packages_utils_containerd feeds/packages/utils/containerd
+git clone --depth=1 https://github.com/sbwml/packages_utils_runc feeds/packages/utils/runc
 
 # 应用补丁
 pushd feeds/luci
