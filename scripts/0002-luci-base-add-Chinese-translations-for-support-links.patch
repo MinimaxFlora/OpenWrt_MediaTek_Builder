@@ -1,0 +1,32 @@
+From d984ca46147d32ed9bfaca3060c67dfc72c1a14d Mon Sep 17 00:00:00 2001
+From: MinimaxFlora <zj18139624826@gmail.com>
+Date: Wed, 19 Aug 2026 21:43:17 +0800
+Subject: [PATCH] luci-base: add Chinese translations for support links
+
+Signed-off-by: MinimaxFlora <zj18139624826@gmail.com>
+---
+ modules/luci-base/po/zh_Hans/base.po | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/modules/luci-base/po/zh_Hans/base.po b/modules/luci-base/po/zh_Hans/base.po
+index 4645182..cc0f7e1 100644
+--- a/modules/luci-base/po/zh_Hans/base.po
++++ b/modules/luci-base/po/zh_Hans/base.po
+@@ -13093,3 +13093,15 @@ msgstr "移远蜂窝网络"
+ 
+ msgid "Temperature"
+ msgstr "温度"
++
++msgid "Help & Feedback"
++msgstr "帮助与反馈"
++
++msgid "Project Website"
++msgstr "项目主页"
++
++msgid "Issue Feedback"
++msgstr "问题反馈"
++
++msgid "Donation Address"
++msgstr "捐赠地址"
+-- 
+2.43.0
