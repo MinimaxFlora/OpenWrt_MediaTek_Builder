@@ -9,16 +9,19 @@ on:
         default: 'ruijie-rg-x60-new'
         type: choice
         options:
-          - 'jdcloud_re-cp-03'
-          - 'glinet_gl-mt6000'
+          - 'cmcc-xr30-nand'
+          - 'cudy-tr3000-v1'
+          - 'h3c-magic-nx30-pro'
+          - 'xiaomi-mi-router-ax3000t'
+          - 'xiaomi-mi-router-wr30u'
+          - 'clx-s20p'
+          - 'xiaomi-redmi-router-ax6000'
           - 'netcore-n60-pro'
           - 'ruijie-rg-x60-new'
-          - 'tplink_tl-xdr6086'
-          - 'tplink_tl-xdr6088'
 
 env:
-  REPO_URL: https://github.com/Yuzhii0718/immortalwrt-mt798x-6.6-padavanonly
-  REPO_BRANCH: openwrt-24.10-6.6
+  REPO_URL: https://github.com/chasey-dev/immortalwrt-mt798x-rebase
+  REPO_BRANCH: 25.12
   CONFIG_FILE: configs/${{ github.event.inputs.device }}.config
   DIY_SCRIPT: diy-script.sh
   CACHE_TOOLCHAIN: true
