@@ -24,7 +24,7 @@ env:
   CACHE_TOOLCHAIN: true
   UPLOAD_BIN_DIR: false
   FIRMWARE_RELEASE: true
-  FIRMWARE_TAG: Ruijie-RG-X60-NEW
+  FIRMWARE_TAG: ${{ github.event.inputs.device }}
   TZ: Asia/Shanghai
 
 jobs:
