@@ -1,13 +1,23 @@
 #!/bin/bash
 
 # 修改默认IP
-sed -i 's/192.168.1.1/10.0.0.1/g' package/base-files/files/bin/config_generate
+sed -i 's/192.168.6.1/10.0.0.1/g' package/base-files/files/bin/config_generate
+sed -i 's/192.168.110.1/10.0.0.1/g' package/base-files/files/bin/config_generate
 
 # 更改默认 Shell 为 zsh
 sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
 
 # TTYD 免登录
 sed -i 's|/bin/login|/bin/login -f root|g' feeds/packages/utils/ttyd/files/ttyd.config
+
+# WiFi 设置
+sed -i 's/ssid="ImmortalWrt-2.4G"/ssid="ZeroWrt-2.4G"/g; s/ssid="ImmortalWrt-5G"/ssid="ZeroWrt-5G"/g' package/mtk/applications/mtwifi-cfg/files/mtwifi.sh
+sed -i 's/set wireless\.default_${dev}\.encryption=none/set wireless.default_${dev}.encryption=psk2/g' package/mtk/applications/mtwifi-cfg/files/mtwifi.sh
+sed -i '/set wireless\.default_${dev}\.encryption=psk2/a\					set wireless.default_${dev}.key=1234567890' package/mtk/applications/mtwifi-cfg/files/mtwifi.sh
+
+# 版本设置
+sed -i 's/VERSION_DIST:=$(if $(VERSION_DIST),$(VERSION_DIST),ImmortalWrt)/VERSION_DIST:=$(if $(VERSION_DIST),$(VERSION_DIST),ZeroWrt)/' include/version.mk
+sed -i 's/VERSION_MANUFACTURER:=$(if $(VERSION_MANUFACTURER),$(VERSION_MANUFACTURER),ImmortalWrt)/VERSION_MANUFACTURER:=$(if $(VERSION_MANUFACTURER),$(VERSION_MANUFACTURER),ZeroWrt)/' include/version.mk
 
 # 移除要替换的包
 rm -rf feeds/packages/lang/{golang,rust,node}
