@@ -1,0 +1,73 @@
+From 8d134239038b14513481bd3d3d64661df39a6796 Mon Sep 17 00:00:00 2001
+From: MinimaxFlora <zj18139624826@gmail.com>
+Date: Wed, 19 Aug 2026 21:39:17 +0800
+Subject: [PATCH] luci-mod-status: add help and feedback links
+
+---
+ .../view/status/include/10_system.js          | 44 ++++++++++++++++++-
+ 1 file changed, 43 insertions(+), 1 deletion(-)
+
+diff --git a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
+index a68e64b..0cdc149 100644
+--- a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
++++ b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
+@@ -54,6 +54,43 @@ return baseclass.extend({
+ 	},
+ 
+ 	render: function(data) {
++			var style = E('style', {}, `
++				.support-btn {
++					display: inline-flex;
++					align-items: center;
++					justify-content: center;
++					height: 28px;
++					padding: 0 12px;
++					border-radius: 6px;
++					background: rgba(64, 158, 255, .85);
++					color: #fff !important;
++					font-size: 13px;
++					text-decoration: none !important;
++					transition: all .2s ease;
++					box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
++					backdrop-filter: blur(6px);
++				}
++
++				.support-btn:hover {
++					transform: translateY(-2px);
++					box-shadow: 0 6px 14px rgba(0, 0, 0, .25);
++					opacity: .9;
++				}
++
++				.support-btn:active {
++					transform: scale(.92);
++				}
++
++				.support-btn:nth-child(2) {
++					background: rgba(103, 194, 58, .85);
++				}
++
++				.support-btn:nth-child(3) {
++					background: rgba(230, 162, 60, .85);
++				}
++		`	);
++			document.head.appendChild(style);
++			
+ 		var boardinfo   = data[0],
+ 		    systeminfo  = data[1],
+ 		    cpubench    = data[2],
+@@ -93,7 +130,12 @@ return baseclass.extend({
+ 				systeminfo.load[1] / 65535.0,
+ 				systeminfo.load[2] / 65535.0
+ 			) : null,
+-			_('CPU usage (%)'),    cpuusage.cpuusage
++			_('CPU usage'),    cpuusage.cpuusage,
++			_('Help & Feedback'),  E('div', { 'style': 'display:flex;gap:8px;align-items:center;' }, [
++				E('a', { 'href': 'https://github.com/MinimaxFlora/OpenWrt_MediaTek_Builder', 'target': '_blank', 'class': 'support-btn' }, _('Project Website')),
++				E('a', { 'href': 'https://github.com/MinimaxFlora/OpenWrt_MediaTek_Builder/issues', 'target': '_blank', 'class': 'support-btn' }, _('Issue Feedback')),
++				E('a', { 'href': 'https://pay.kejizero.xyz', 'target': '_blank', 'class': 'support-btn' }, _('Donation Address'))
++			])
+ 		];
+ 
+ 		if (tempinfo.tempinfo) {
+-- 
+2.43.0
