@@ -28,5 +28,11 @@ git clone --depth=1 -b packages-25.12 https://github.com/sbwml/feeds_packages_la
 # 我的插件源
 git clone --depth=1 https://github.com/MinimaxFlora/openwrt_package package/new/helloworld
 
+# 应用补丁
+pushd feeds/luci
+    curl -s https://github.com/MinimaxFlora/OpenWrt_MediaTek_Builder/raw/refs/heads/master/scripts/0001-luci-mod-status-add-help-and-feedback-links.patch | patch -p1
+    curl -s https://github.com/MinimaxFlora/OpenWrt_MediaTek_Builder/raw/refs/heads/master/scripts/0002-luci-base-add-Chinese-translations-for-support-links.patch | patch -p1
+popd
+
 ./scripts/feeds update -a
 ./scripts/feeds install -a
