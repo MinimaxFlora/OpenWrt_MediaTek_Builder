@@ -24,7 +24,7 @@ rm -rf feeds/luci/themes/luci-theme-argon
 rm -rf feeds/packages/lang/{golang,rust,node}
 rm -rf feeds/packages/utils/{docker,dockerd,containerd,runc}
 rm -rf feeds/packages/net/{open-app-filter,xray-core,v2ray-geodata,sing-box,chinadns-ng,dns2socks,hysteria,ipt2socks,mosdns,microsocks,naiveproxy,shadowsocks-libev,shadowsocks-rust,shadowsocksr-libev,simple-obfs,tcping,trojan-plus,tuic-client,v2ray-plugin,xray-plugin,geoview,shadow-tls}
-rm -rf feeds/luci/applications/{luci-app-argon-config,luci-app-appfilter,luci-app-diskman,luci-app-dockerman,luci-app-homeproxy,luci-app-openclash,luci-app-openlist,luci-app-passwall,luci-app-ramfree}
+rm -rf feeds/luci/applications/{luci-app-argon-config,luci-app-appfilter,luci-app-diskman,luci-app-dockerman,luci-app-homeproxy,luci-app-openclash,luci-app-openlist,luci-app-passwall,luci-app-ramfree,luci-app-radicale3}
 
 # Go 1.26
 git clone --depth=1 -b 26.x https://github.com/sbwml/packages_lang_golang feeds/packages/lang/golang
@@ -38,6 +38,7 @@ git clone --depth=1 -b packages-25.12 https://github.com/sbwml/feeds_packages_la
 
 # 我的插件源
 git clone --depth=1 https://github.com/MinimaxFlora/openwrt_package package/new/helloworld
+sed -i 's/LUCI_DEPENDS:=+USE_APK:wget-any +!USE_APK:wget +jsonfilter/LUCI_DEPENDS:=+wget +jsonfilter/' package/new/helloworld/luci-theme-argon/Makefile
 
 # Docker
 git clone --depth=1 -b openwrt-25.12 https://github.com/sbwml/luci-app-dockerman feeds/luci/applications/luci-app-dockerman
