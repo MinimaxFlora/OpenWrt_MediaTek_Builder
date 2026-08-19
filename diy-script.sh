@@ -59,6 +59,7 @@ pushd feeds/luci
     curl -s https://raw.githubusercontent.com/MinimaxFlora/OpenWrt_MediaTek_Builder/refs/heads/master/scripts/0001-luci-mod-status-add-help-and-feedback-links.patch | patch -p1
     curl -s https://raw.githubusercontent.com/MinimaxFlora/OpenWrt_MediaTek_Builder/refs/heads/master/scripts/0002-luci-base-add-Chinese-translations-for-support-links.patch | patch -p1
     curl -s https://raw.githubusercontent.com/MinimaxFlora/OpenWrt_MediaTek_Builder/refs/heads/master/scripts/0003-luci-app-firewall-remove-flow-offloading-settings.patch | patch -p1
+    curl -s https://raw.githubusercontent.com/MinimaxFlora/OpenWrt_MediaTek_Builder/refs/heads/master/scripts/0004-luci-mod-system-add-modal-overlay-dialog-to-reboot.patch | patch -p1
 popd
 
 ./scripts/feeds update -a
