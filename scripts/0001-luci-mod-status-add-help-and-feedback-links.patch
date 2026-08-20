@@ -1,6 +1,6 @@
-From 9a1ffba65a9ca060586c8811af4429aa86a95e5d Mon Sep 17 00:00:00 2001
+From 8dbd30cccd77efe12e304656788f2f169a295829 Mon Sep 17 00:00:00 2001
 From: MinimaxFlora <zj18139624826@gmail.com>
-Date: Wed, 19 Aug 2026 23:43:32 +0800
+Date: Thu, 20 Aug 2026 10:38:41 +0800
 Subject: [PATCH] luci-mod-status: add help and feedback links
 
 Signed-off-by: MinimaxFlora <zj18139624826@gmail.com>
@@ -9,7 +9,7 @@ Signed-off-by: MinimaxFlora <zj18139624826@gmail.com>
  1 file changed, 43 insertions(+), 1 deletion(-)
 
 diff --git a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
-index aa46d48ae0..0f9fbae2af 100644
+index aa46d48ae0..049a1a5a3e 100644
 --- a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
 +++ b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
 @@ -63,6 +63,43 @@ return baseclass.extend({
@@ -61,7 +61,7 @@ index aa46d48ae0..0f9fbae2af 100644
  				systeminfo.load[2] / 65535.0
  			) : null,
 -			_('CPU usage (%)'),    cpuusage.cpuusage
-+			_('CPU usage'),    cpuusage.cpuusage,
++			_('CPU usage (%)'),    cpuusage.cpuusage,
 +			_('Help & Feedback'),  E('div', { 'style': 'display:flex;gap:8px;align-items:center;' }, [
 +				E('a', { 'href': 'https://github.com/MinimaxFlora/OpenWrt_MediaTek_Builder', 'target': '_blank', 'class': 'support-btn' }, _('Project Website')),
 +				E('a', { 'href': 'https://github.com/MinimaxFlora/OpenWrt_MediaTek_Builder/issues', 'target': '_blank', 'class': 'support-btn' }, _('Issue Feedback')),
