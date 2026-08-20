@@ -1,18 +1,18 @@
-From 49d7fd9200f4dec9cd10254e154913872ca136ca Mon Sep 17 00:00:00 2001
+From 434d3ef7c6dc0468e4ebf6ce66a7b9a4e2b99365 Mon Sep 17 00:00:00 2001
 From: MinimaxFlora <zj18139624826@gmail.com>
-Date: Wed, 19 Aug 2026 23:46:18 +0800
-Subject: [PATCH] luci-base: add Chinese translations for support links
+Date: Thu, 20 Aug 2026 10:45:34 +0800
+Subject: [PATCH] luci-mod-system: add modal overlay dialog to reboot
 
 Signed-off-by: MinimaxFlora <zj18139624826@gmail.com>
 ---
- modules/luci-base/po/zh_Hans/base.po | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ modules/luci-base/po/zh_Hans/base.po | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
 diff --git a/modules/luci-base/po/zh_Hans/base.po b/modules/luci-base/po/zh_Hans/base.po
-index cabaea73ab..da88c276c3 100644
+index cabaea73ab..5b95883353 100644
 --- a/modules/luci-base/po/zh_Hans/base.po
 +++ b/modules/luci-base/po/zh_Hans/base.po
-@@ -14315,3 +14315,15 @@ msgstr "移远蜂窝网络"
+@@ -14315,3 +14315,24 @@ msgstr "移远蜂窝网络"
  
  msgid "Temperature"
  msgstr "温度"
@@ -28,9 +28,6 @@ index cabaea73ab..da88c276c3 100644
 +
 +msgid "Donation Address"
 +msgstr "捐赠地址"
-+
-+msgid "CPU usage"
-+msgstr "CPU 使用率"
 +
 +msgid "Confirm Reboot"
 +msgstr "确认重启"
