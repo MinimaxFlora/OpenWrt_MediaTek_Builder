@@ -37,5 +37,20 @@ index cabaea73ab..5b95883353 100644
 +
 +msgid "Confirm"
 +msgstr "确认"
++
++msgid "Network Speed"
++msgstr "网络速率"
++
++msgid "Download Rate (RX)"
++msgstr "下行速率"
++
++msgid "Upload Rate (TX)"
++msgstr "上行速率"
++
++msgid "Calculating..."
++msgstr "计算中..."
++
++msgid "No active network interfaces"
++msgstr "无活动的网络接口"
 -- 
 2.43.0
