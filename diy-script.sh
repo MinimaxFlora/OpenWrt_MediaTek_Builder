@@ -70,6 +70,9 @@ git clone --depth=1 https://github.com/sbwml/packages_utils_dockerd feeds/packag
 git clone --depth=1 https://github.com/sbwml/packages_utils_containerd feeds/packages/utils/containerd
 git clone --depth=1 https://github.com/sbwml/packages_utils_runc feeds/packages/utils/runc
 
+# GCC 16
+curl -s https://raw.githubusercontent.com/MinimaxFlora/OpenWrt_MediaTek_Builder/refs/heads/master/scripts/0006-toolchain-gcc-add-support-for-GCC-16.patch | patch -p1
+
 # 应用补丁
 pushd feeds/luci
     curl -s https://raw.githubusercontent.com/MinimaxFlora/OpenWrt_MediaTek_Builder/refs/heads/master/scripts/0001-luci-mod-status-add-help-and-feedback-links.patch | patch -p1
