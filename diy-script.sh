@@ -70,9 +70,6 @@ git clone --depth=1 https://github.com/sbwml/packages_utils_dockerd feeds/packag
 git clone --depth=1 https://github.com/sbwml/packages_utils_containerd feeds/packages/utils/containerd
 git clone --depth=1 https://github.com/sbwml/packages_utils_runc feeds/packages/utils/runc
 
-# GCC 16
-curl -s https://raw.githubusercontent.com/MinimaxFlora/OpenWrt_MediaTek_Builder/refs/heads/master/scripts/0006-toolchain-gcc-add-support-for-GCC-16.patch | patch -p1
-
 # 应用补丁
 pushd feeds/luci
     curl -s https://raw.githubusercontent.com/MinimaxFlora/OpenWrt_MediaTek_Builder/refs/heads/master/scripts/0001-luci-mod-status-add-help-and-feedback-links.patch | patch -p1
@@ -81,6 +78,22 @@ pushd feeds/luci
     curl -s https://raw.githubusercontent.com/MinimaxFlora/OpenWrt_MediaTek_Builder/refs/heads/master/scripts/0004-luci-mod-system-add-modal-overlay-dialog-to-reboot.patch | patch -p1
     curl -s https://raw.githubusercontent.com/MinimaxFlora/OpenWrt_MediaTek_Builder/refs/heads/master/scripts/0005-luci-mod-status-add-network-speed-monitor.patch | patch -p1
 popd
+
+# GCC 16
+curl -s https://raw.githubusercontent.com/MinimaxFlora/OpenWrt_MediaTek_Builder/refs/heads/master/scripts/0006-toolchain-gcc-add-support-for-GCC-16.patch | patch -p1
+
+# xl2tpd
+sed -i '/ifneq (0,0)/i TARGET_CFLAGS += -std=gnu17\n' feeds/packages/net/xl2tpd/Makefile
+
+# elfutils lto
+curl -s https://raw.githubusercontent.com/MinimaxFlora/OpenWrt_MediaTek_Builder/refs/heads/master/scripts/900-fix-gcc16-null-dereference-with-lto.patch > package/libs/elfutils/patches/900-fix-gcc16-null-dereference-with-lto.patch
+
+# libwebsockets
+mkdir -p feeds/packages/libs/libwebsockets/patches
+curl -s https://raw.githubusercontent.com/MinimaxFlora/OpenWrt_MediaTek_Builder/refs/heads/master/scripts/900-fix-build-for-gcc-16.patch > feeds/packages/libs/libwebsockets/patches/900-fix-build-for-gcc-16.patch
+
+# bash
+sed -i "/PKG_INSTALL:=/i\PKG_BUILD_FLAGS:=no-lto" feeds/packages/utils/bash/Makefile
 
 ./scripts/feeds update -a
 ./scripts/feeds install -a
