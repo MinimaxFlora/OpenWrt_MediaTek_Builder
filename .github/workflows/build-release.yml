@@ -48,7 +48,6 @@ env:
   COMMIT_DATE: ''
   COMMIT_MESSAGE: ''
   COMMIT_HASH: ''
-  build_dir: /builder
 
 jobs:
   Build:
@@ -82,84 +81,16 @@ jobs:
         df -Th / /mnt
         echo
 
-    # 先安装依赖(Build System Setup 的 apt 列表中包含 mkfs.xfs 所需的 xfsprogs),
-    # 再执行磁盘合并,否则 Free Disk Space 中的 mkfs.xfs 会找不到命令。
+    - name: Free disk space
+      uses: sbwml/actions@free-disk
+      with:
+        build-mount-path: /builder
+
     - name: Build System Setup
-      env:
-        DEBIAN_FRONTEND: noninteractive
-      run: |
-        sudo rm -rf /etc/apt/sources.list.d
-        sudo bash -c "curl -skL raw.githubusercontent.com/sbwml/actions/openwrt-build-setup/sources-24.04.list > /etc/apt/sources.list"
-        sudo apt-get update
-        sudo apt-get install -y build-essential flex bison cmake g++ gawk gcc-multilib g++-multilib gettext git gnutls-dev libfuse-dev libncurses5-dev libplist-utils libssl-dev python3 python3-pip python3-ply python3-pyelftools rsync unzip zlib1g-dev file wget subversion patch upx-ucl autoconf automake curl asciidoc binutils bzip2 lib32gcc-s1 libc6-dev-i386 uglifyjs msmtp texinfo libreadline-dev libglib2.0-dev xmlto libelf-dev libtool autopoint antlr3 gperf ccache swig coreutils haveged scons libpython3-dev rename qemu-utils jq xfsprogs
-        sudo apt-get clean
-
-    # 该步骤必须在 Checkout 之前执行:
-    # 它会用 / 与 /mnt 的空闲空间创建 LVM 卷组并挂载到 $GITHUB_WORKSPACE,
-    # 挂载后工作区原有内容将不可见,因此后续步骤再执行 Checkout 与源码克隆。
-    - name: Free Disk Space
-      run: |
-        SWAP_SIZE_GB=4
-        ROOT_RESERVE_GB=2
-        BUILD_MOUNT_PATH="${{ github.workspace }}"
-        sudo mkdir -p "$BUILD_MOUNT_PATH"
-        sudo find /opt -mindepth 1 -maxdepth 1 ! -name "*runner*" -exec rm -rf {} \;
-        sudo rm -rf /usr/local/lib/android \
-        /usr/lib/google-cloud-sdk \
-        /usr/lib/jvm \
-        /usr/lib/{clang-16,clang-17,llvm-16,llvm-17} \
-        /usr/local/aws* \
-        /usr/local/julia* \
-        /usr/local/share/{chromium,powershell,vcpkg} \
-        /usr/share/dotnet \
-        /usr/share/swift
-        sudo swapoff -a
-        sudo rm -f /swapfile
-        if [[ "$SWAP_SIZE_GB" != 0 ]]; then
-          echo "::group:: Create SWAP"
-          sudo dd if=/dev/zero of="/mnt/swapfile" bs=1G count="$SWAP_SIZE_GB"
-          sudo chmod 600 /mnt/swapfile
-          sudo mkswap /mnt/swapfile
-          sudo swapon /mnt/swapfile
-          echo "::endgroup::"
-        fi
-        root_dev=$(df / | awk 'NR==2 {print $1}')
-        mnt_dev=$(df /mnt | awk 'NR==2 {print $1}')
-        if [[ "$root_dev" != "$mnt_dev" ]]; then
-          echo "::group:: Create Volume Group"
-          mnt_size=$(expr $(df -h /mnt | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\..*//') - "$SWAP_SIZE_GB")
-          root_size=$(expr $(df -h / | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\..*//') - "$ROOT_RESERVE_GB")
-          sudo truncate -s "$mnt_size"G /mnt/mnt.img
-          sudo truncate -s "$root_size"G /root.img
-          sudo losetup /dev/loop6 /mnt/mnt.img
-          sudo losetup /dev/loop7 /root.img
-          sudo pvcreate /dev/loop6
-          sudo pvcreate /dev/loop7
-          sudo vgcreate github /dev/loop6 /dev/loop7
-          sudo lvcreate -n runner -l 100%FREE github
-          sudo mkfs.xfs /dev/mapper/github-runner
-          sudo mount /dev/mapper/github-runner "$BUILD_MOUNT_PATH"
-          echo "::endgroup::"
-        fi
-        sudo chown -R runner:runner "$BUILD_MOUNT_PATH"
-        sudo sysctl -w vm.drop_caches=3
-
-    - name: Disk Space Report After Modification
-      run: |
-        echo -e "\n\e[1;32mMemory:\e[0m"
-        sudo free -h
-        echo -e "\e[1;32mAvailable Storage:\e[0m"
-        sudo df -Th
+      uses: sbwml/actions@openwrt-build-setup
 
     - name: Install LLVM
-      run: |
-        export PATH="/opt/clang/bin:$PATH"
-        echo "/opt/clang/bin" >> $GITHUB_PATH
-        sudo mkdir /opt/clang
-        wget -q github.com/sbwml/openwrt-llvm-toolchain/releases/download/22.0.2/clang-22.0.2-x86_64-unknown-linux-gnu.tar.xz
-        sudo tar --strip-components=1 -C /opt/clang -xf clang-*-x86_64-unknown-linux-gnu.tar.xz
-        rm -rf clang-*-x86_64-unknown-linux-gnu.tar.xz
-        clang --version
+      uses: sbwml/actions@install-llvm
 
     - name: Set Timezone
       run: sudo timedatectl set-timezone "$TZ"
@@ -169,9 +100,9 @@ jobs:
 
     - name: Clone Source Code
       run: |
-        df -hT $GITHUB_WORKSPACE
-        git clone $REPO_URL -b $REPO_BRANCH openwrt
-        cd openwrt && rm -rf files
+        df -hT /builder
+        git clone $REPO_URL -b $REPO_BRANCH /builder/openwrt
+        cd /builder/openwrt && rm -rf files
         echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
         COMMIT_AUTHOR=$(git show -s --date=short --format="作者: %an")
         echo "COMMIT_AUTHOR=$COMMIT_AUTHOR" >> $GITHUB_ENV
@@ -182,31 +113,12 @@ jobs:
         COMMIT_HASH=$(git show -s --date=short --format="hash: %H")
         echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
 
-    - name: Create Builder Directory
-      run: |
-        sudo mkdir -p /builder
-        sudo chown -R runner:runner /builder
-
     - name: Restore Cached
-      if: ${{ github.event.inputs.ccache == 'true' && github.event.inputs.device != 'armv8' && github.event.inputs.device != 'nanopi-r4s' }}
+      if: ${{ github.event.inputs.ccache == 'true' }}
       uses: actions/cache/restore@main
       with:
         path: /builder/.ccache
         key: openwrt-25.12-${{ github.event.inputs.device }}-ccache
-
-    - name: Restore Cached (releases)
-      if: ${{ github.event.inputs.ccache == 'true' && github.event.inputs.device == 'armv8' || github.event.inputs.device == 'nanopi-r4s' }}
-      continue-on-error: true
-      working-directory: /builder
-      run: |
-        curl -s api.github.com/repos/${{ github.repository }}/releases | grep 'browser_download_url' | grep ccache | grep ${{ github.event.inputs.device }} | awk -F '"' '{print $4}' | grep -v '^$' | xargs -n 1 wget -q
-        cat ${{ github.event.inputs.device }}.tar.* | tar -xf - || true
-        rm -rf ${{ github.event.inputs.device }}.tar.* || true
-        [ -d .ccache ] && cache_size=$(du -sb .ccache | awk '{print $1}') || cache_size=0
-        cache_size_mb=$(echo "scale=0; ${cache_size} / (1024 * 1024)" | bc)
-        echo "Cache Size: ~${cache_size_mb} MB (${cache_size} B)"
-        echo "Cache restored successfully"
-        echo "Cache restored from key: ${{ github.event.inputs.device }}"
 
     - name: Install Feeds
       run: |
@@ -263,7 +175,7 @@ jobs:
         echo "FILE_DATE=$(date +"%Y.%m.%d")" >> $GITHUB_ENV
 
     - name: Delete Cached
-      if: ${{ github.event.inputs.ccache == 'true' && github.event.inputs.device != 'armv8' && github.event.inputs.device != 'nanopi-r4s' }}
+      if: ${{ github.event.inputs.ccache == 'true' }}
       continue-on-error: true
       working-directory: /builder
       env:
@@ -273,34 +185,12 @@ jobs:
         gh cache delete openwrt-25.12-${{ github.event.inputs.device }}-ccache || true
 
     - name: Save Cached
-      if: ${{ github.event.inputs.ccache == 'true' && github.event.inputs.device != 'armv8' && github.event.inputs.device != 'nanopi-r4s' }}
+      if: ${{ github.event.inputs.ccache == 'true' }}
       continue-on-error: true
       uses: actions/cache/save@main
       with:
         path: /builder/.ccache
         key: openwrt-25.12-${{ github.event.inputs.device }}-ccache
-
-    - name: Create ccache tar files
-      if: ${{ github.event.inputs.ccache == 'true' && github.event.inputs.device == 'armv8' || github.event.inputs.device == 'nanopi-r4s' }}
-      continue-on-error: true
-      working-directory: /builder
-      run: |
-        mkdir -p ccache
-        tar cf - .ccache | split -d -b 1800m - ccache/${{ github.event.inputs.device }}.tar.
-
-    - name: Upload Cached (releases - ccache)
-      if: ${{ github.event.inputs.ccache == 'true' && github.event.inputs.device == 'armv8' || github.event.inputs.device == 'nanopi-r4s' }}
-      continue-on-error: true
-      uses: ncipollo/release-action@main
-      with:
-        name: ccache
-        allowUpdates: true
-        tag: ccache
-        commit: master
-        replacesArtifacts: true
-        prerelease: true
-        token: ${{ secrets.GITHUB_TOKEN }}
-        artifacts: ${{ env.build_dir }}/ccache/*
 
     - name: Check Space Usage
       if: (!cancelled())
