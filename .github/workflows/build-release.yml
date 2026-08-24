@@ -1,12 +1,14 @@
 # SPDX-License-Identifier: MIT
 # OpenWrt MediaTek Builder - MT798x cloud firmware build workflow
 #
-# 参考 VIKINGYFY/OpenWRT-CI 的结构与做法:
-#   - 构建变量集中初始化,避免散落各处
-#   - 多级缓存 key (device + 源码 hash) + restore-keys 回退 + 旧缓存清理
-#   - 内存感知并行度 (1.5GB/核),避免 Runner OOM
-#   - MTK 串行编译 (warp -> mt_wifi),避免内核模块竞争
-#   - 依赖 sbwml/actions 官方复合动作:磁盘合并 / 构建环境 / LLVM
+# 构建骨架参考 VIKINGYFY/OpenWRT-CI 的编译流程:
+#   Checkout -> 环境初始化 -> 变量初始化 -> 克隆源码 -> 脚本检查
+#   -> 缓存恢复 -> feeds -> 定制 -> 下载 -> 编译 -> 打包发布
+#
+# 定制步骤 (Custom Settings) 执行本仓库 diy-script.sh:
+#   完整保留个人化编译逻辑(主机名/IP/密码/主题/插件源/补丁),不做配置拼接。
+# 环境准备依赖 sbwml/actions 官方复合动作:
+#   free-disk(磁盘合并挂载 /builder) / openwrt-build-setup / install-llvm
 
 name: Build releases
 
@@ -73,8 +75,11 @@ jobs:
 
     steps:
     # ---------------------------------------------------------------
-    # 阶段一:环境准备
+    # 源码与仓库文件(先行获取,后续步骤依赖仓库内脚本与配置)
     # ---------------------------------------------------------------
+    - name: Checkout
+      uses: actions/checkout@main
+
     - name: Show system
       run: |
         echo -e "\n\e[1;32mCPU:\e[0m"
@@ -89,7 +94,10 @@ jobs:
         uname -a
         echo
 
-    # 合并 / 与 /mnt 空闲空间并挂载到 /builder(须在源码克隆前执行)
+    # ---------------------------------------------------------------
+    # 环境初始化
+    # ---------------------------------------------------------------
+    # 合并 / 与 /mnt 空闲空间并挂载到 /builder,须在源码克隆前执行
     - name: Free disk space
       uses: sbwml/actions@free-disk
       with:
@@ -105,12 +113,17 @@ jobs:
       run: sudo timedatectl set-timezone "$TZ"
 
     # ---------------------------------------------------------------
-    # 阶段二:源码获取
+    # 变量初始化
     # ---------------------------------------------------------------
-    - name: Checkout
-      uses: actions/checkout@main
+    - name: Initialization Values
+      run: |
+        echo "SOURCE_REPO=$(echo $REPO_URL | awk -F '/' '{print $(NF)}')" >> $GITHUB_ENV
+        echo "Building $REPO_URL ($REPO_BRANCH) for device: ${{ github.event.inputs.device }}"
 
-    - name: Clone Source Code
+    # ---------------------------------------------------------------
+    # 克隆源码
+    # ---------------------------------------------------------------
+    - name: Clone Code
       run: |
         df -hT /builder
         git clone $REPO_URL -b $REPO_BRANCH /builder/openwrt
@@ -126,8 +139,14 @@ jobs:
         COMMIT_HASH=$(git show -s --date=short --format="hash: %H")
         echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
 
+    - name: Check Scripts
+      run: |
+        # 赋予自定义脚本执行权限(仓库文件均以 LF 保存,无需 dos2unix)
+        find $GITHUB_WORKSPACE -maxdepth 2 -type f -name "*.sh" -exec chmod +x {} \;
+        echo "scripts permission set"
+
     # ---------------------------------------------------------------
-    # 阶段三:缓存恢复
+    # 缓存恢复
     # key 精确到源码 commit,restore-keys 回退到同设备最近缓存
     # ---------------------------------------------------------------
     - name: Restore Cached
@@ -140,7 +159,7 @@ jobs:
         restore-keys: |
           ${{ env.CCACHE_KEY_PREFIX }}-
 
-    # 未精确命中时删除同设备的旧缓存条目,避免累积占满 10GB 配额
+    # 未精确命中时删除同设备旧缓存条目,避免累积占满 10GB 配额
     - name: Cleanup Stale Caches
       if: ${{ github.event.inputs.ccache == 'true' && steps.restore-cache.outputs.cache-hit != 'true' }}
       continue-on-error: true
@@ -151,14 +170,17 @@ jobs:
         echo "stale caches cleaned"
 
     # ---------------------------------------------------------------
-    # 阶段四:配置与定制
+    # feeds 更新
     # ---------------------------------------------------------------
-    - name: Install Feeds
+    - name: Update Feeds
       run: |
         cd $OPENWRT_PATH
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
+    # ---------------------------------------------------------------
+    # 配置与定制
+    # ---------------------------------------------------------------
     - name: Generate Variables
       run: |
         # 防御性检查:设备配置文件必须存在
@@ -169,7 +191,6 @@ jobs:
         cp $CONFIG_FILE $OPENWRT_PATH/.config
         cd $OPENWRT_PATH
         make defconfig > /dev/null 2>&1
-        echo "SOURCE_REPO=$(echo $REPO_URL | awk -F '/' '{print $(NF)}')" >> $GITHUB_ENV
         echo "DEVICE_TARGET=$(grep CONFIG_TARGET_BOARD .config | awk -F '\"' '{print $2}')" >> $GITHUB_ENV
         echo "DEVICE_SUBTARGET=$(grep CONFIG_TARGET_SUBTARGET .config | awk -F '\"' '{print $2}')" >> $GITHUB_ENV
 
@@ -181,18 +202,18 @@ jobs:
         mixkey: ${{ env.SOURCE_REPO }}-${{ env.REPO_BRANCH }}-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
         prefix: ${{ env.OPENWRT_PATH }}
 
-    - name: Load Custom Configuration
+    # 执行本仓库 diy-script.sh:个人化编译步骤(主机名/IP/密码/插件源/补丁等),
+    # 末尾自带 feeds update/install,克隆的新插件源随即生效。
+    - name: Custom Settings
       run: |
         [ -e files ] && mv files $OPENWRT_PATH/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE $OPENWRT_PATH/.config
-        chmod +x $GITHUB_WORKSPACE/scripts/*.sh
-        chmod +x $DIY_SCRIPT
         cd $OPENWRT_PATH
         $GITHUB_WORKSPACE/$DIY_SCRIPT
 #        $GITHUB_WORKSPACE/scripts/preset-terminal-tools.sh
 
     # ---------------------------------------------------------------
-    # 阶段五:下载与编译
+    # 下载与编译
     # ---------------------------------------------------------------
     - name: Download Packages
       run: |
@@ -223,14 +244,21 @@ jobs:
         echo "DATE=$(date +"%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
         echo "FILE_DATE=$(date +"%Y.%m.%d")" >> $GITHUB_ENV
 
-    - name: Check Space Usage
+    - name: Machine Information
       if: (!cancelled())
-      run: df -hT
+      run: |
+        echo "======================="
+        lscpu | grep -E "name|Core|Thread"
+        echo "======================="
+        df -h
+        echo "======================="
+        du -h --max-depth=1 /builder | sort -rh | head -10
+        echo "======================="
 
     # ---------------------------------------------------------------
-    # 阶段六:产物整理与发布
+    # 打包发布
     # ---------------------------------------------------------------
-    - name: Organize Files
+    - name: Package Firmware
       if: steps.compile.outputs.status == 'success'
       run: |
         cd $OPENWRT_PATH/bin/targets/*/*
