@@ -15,10 +15,5 @@ jobs:
       contents: write
       actions: write
     with:
-      REPO_URL: https://github.com/chasey-dev/immortalwrt-mt798x-rebase
-      REPO_BRANCH: 25.12
       CONFIG_FILE: configs/ruijie-rg-x60-new.config
-      CACHE_TOOLCHAIN: true
-      UPLOAD_BIN_DIR: false
-      FIRMWARE_RELEASE: true
       FIRMWARE_TAG: Ruijie_RG_X60-NEW
