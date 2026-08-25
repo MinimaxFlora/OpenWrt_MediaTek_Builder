@@ -1,4 +1,4 @@
-name: Ruijie-rg-x60-New
+name: Ruijie_RG_X60-NEW
 
 on:
   workflow_dispatch:
