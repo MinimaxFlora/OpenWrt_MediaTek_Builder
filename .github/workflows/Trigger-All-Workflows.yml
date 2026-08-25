@@ -1,0 +1,17 @@
+name: Trigger-All-Workflows
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 18 * * 5"
+
+permissions:
+  contents: read
+  actions: read
+  
+jobs:
+  Ruijie-rg-x60-New:
+    uses: ./.github/workflows/Ruijie-rg-x60-New.yml
+    permissions:
+      contents: write
+      actions: write
