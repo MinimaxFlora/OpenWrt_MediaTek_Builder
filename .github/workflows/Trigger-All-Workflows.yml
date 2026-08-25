@@ -12,17 +12,11 @@ permissions:
 jobs:
   Ruijie_RG_X60-NEW:
     uses: ./.github/workflows/Ruijie_RG_X60-NEW.yml
-    with:
-      CONFIG_FILE: configs/ruijie-rg-x60-new.config
-      FIRMWARE_TAG: Ruijie_RG_X60-NEW
     permissions:
       contents: write
       actions: write
 #  Netcore_N60-PRO:
 #    uses: ./.github/workflows/Netcore_N60-PRO.yml
-#    with:
-#      CONFIG_FILE: configs/netcore-n60-pro.config
-#      FIRMWARE_TAG: Netcore_N60-PRO
 #    permissions:
 #      contents: write
 #      actions: write
