@@ -3,12 +3,6 @@ name: Build-Release
 on:
   workflow_call:
     inputs:
-      REPO_URL:
-        required: true
-        type: string
-      REPO_BRANCH:
-        required: true
-        type: string
       CONFIG_FILE:
         required: true
         type: string
@@ -17,8 +11,8 @@ on:
         type: string
 
 env:
-  REPO_URL: ${{ inputs.REPO_URL }}
-  REPO_BRANCH: ${{ inputs.REPO_BRANCH }}
+  REPO_URL: https://github.com/chasey-dev/immortalwrt-mt798x-rebase
+  REPO_BRANCH: 25.12
   CONFIG_FILE: ${{ inputs.CONFIG_FILE }}
   DIY_SCRIPT: diy-script.sh
   CACHE_TOOLCHAIN: true
