@@ -10,11 +10,13 @@ permissions:
   actions: read
 
 jobs:
+
   Ruijie_RG_X60-NEW:
     uses: ./.github/workflows/Ruijie_RG_X60-NEW.yml
     permissions:
       contents: write
       actions: write
+      
 #  Netcore_N60-PRO:
 #    uses: ./.github/workflows/Netcore_N60-PRO.yml
 #    permissions:
