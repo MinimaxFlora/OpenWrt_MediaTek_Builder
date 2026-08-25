@@ -1,0 +1,25 @@
+name: Ruijie-rg-x60-New
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  Build:
+    uses: ./.github/workflows/Build-Release.yml
+    permissions:
+      contents: write
+      actions: write
+    with:
+      repo_url: https://github.com/chasey-dev/immortalwrt-mt798x-rebase
+      repo_branch: 25.12
+      config_file: configs/ruijie-rg-x60-new.config
+      diy_script: diy-script.sh
+      cache_toolchain: true
+      upload_bin_dir: false
+      firmware_release: true
+      firmware_tag: Ruijie_RG_X60-NEW
