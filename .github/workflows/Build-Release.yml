@@ -12,21 +12,19 @@ on:
       CONFIG_FILE:
         required: true
         type: string
-      CACHE_TOOLCHAIN:
-        required: true
-        type: string    
-      UPLOAD_BIN_DIR:
-        required: true
-        type: string  
-      FIRMWARE_RELEASE:
-        required: true
-        type: string
       FIRMWARE_TAG:
         required: true
         type: string
 
 env:
+  REPO_URL: ${{ inputs.REPO_URL }}
+  REPO_BRANCH: ${{ inputs.REPO_BRANCH }}
+  CONFIG_FILE: ${{ inputs.CONFIG_FILE }}
   DIY_SCRIPT: diy-script.sh
+  CACHE_TOOLCHAIN: true
+  UPLOAD_BIN_DIR: false
+  FIRMWARE_RELEASE: true
+  FIRMWARE_TAG: ${{ inputs.FIRMWARE_TAG }}
   TZ: Asia/Shanghai
   
 jobs:
