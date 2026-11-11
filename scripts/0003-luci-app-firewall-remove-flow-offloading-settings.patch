@@ -1,14 +1,15 @@
-From 2aa98930e23e513506b7df3650279a0396c95526 Mon Sep 17 00:00:00 2001
+From c5e22c7028c894ebc2bbe4e4516c7e35f4c7b6b2 Mon Sep 17 00:00:00 2001
 From: MinimaxFlora <zj18139624826@gmail.com>
-Date: Thu, 20 Aug 2026 01:37:44 +0800
+Date: Wed, 11 Nov 2026 21:39:51 +0800
 Subject: [PATCH] luci-app-firewall: remove flow offloading settings
 
+Signed-off-by: MinimaxFlora <zj18139624826@gmail.com>
 ---
  .../resources/view/firewall/zones.js          | 27 -------------------
  1 file changed, 27 deletions(-)
 
 diff --git a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-index ddd5d5c2f4..e2fa89643b 100644
+index ddd5d5c..e2fa896 100644
 --- a/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
 +++ b/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
 @@ -73,33 +73,6 @@ return view.extend({
@@ -45,5 +46,3 @@ index ddd5d5c2f4..e2fa89643b 100644
  
  		s = m.section(form.GridSection, 'zone', _('Zones'));
  		s.addremove = true;
--- 
-2.43.0

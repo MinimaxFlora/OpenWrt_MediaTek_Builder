@@ -1,6 +1,6 @@
-From 245b88c89d33ac8a30a9de1993d97f62fbc6e3e7 Mon Sep 17 00:00:00 2001
+From bed8bd6ab57d8d6e7319dd1e031b994d4e80efdf Mon Sep 17 00:00:00 2001
 From: MinimaxFlora <zj18139624826@gmail.com>
-Date: Thu, 20 Aug 2026 02:07:13 +0800
+Date: Wed, 11 Nov 2026 21:39:52 +0800
 Subject: [PATCH] luci-mod-system: add modal overlay dialog to reboot
 
 Signed-off-by: MinimaxFlora <zj18139624826@gmail.com>
@@ -9,7 +9,7 @@ Signed-off-by: MinimaxFlora <zj18139624826@gmail.com>
  1 file changed, 20 insertions(+), 1 deletion(-)
 
 diff --git a/modules/luci-mod-system/htdocs/luci-static/resources/view/system/reboot.js b/modules/luci-mod-system/htdocs/luci-static/resources/view/system/reboot.js
-index 92e1dd4920..c106f781aa 100644
+index 92e1dd4..c106f78 100644
 --- a/modules/luci-mod-system/htdocs/luci-static/resources/view/system/reboot.js
 +++ b/modules/luci-mod-system/htdocs/luci-static/resources/view/system/reboot.js
 @@ -30,7 +30,26 @@ return view.extend({
@@ -40,5 +40,3 @@ index 92e1dd4920..c106f781aa 100644
  		}, _('Perform reboot')));
  
  		return body;
--- 
-2.43.0

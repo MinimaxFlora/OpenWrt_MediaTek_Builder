@@ -1,6 +1,6 @@
-From 8dbd30cccd77efe12e304656788f2f169a295829 Mon Sep 17 00:00:00 2001
+From 0b1815ba96474015fc80f07d93deb8cf9996090c Mon Sep 17 00:00:00 2001
 From: MinimaxFlora <zj18139624826@gmail.com>
-Date: Thu, 20 Aug 2026 10:38:41 +0800
+Date: Wed, 11 Nov 2026 21:39:49 +0800
 Subject: [PATCH] luci-mod-status: add help and feedback links
 
 Signed-off-by: MinimaxFlora <zj18139624826@gmail.com>
@@ -9,7 +9,7 @@ Signed-off-by: MinimaxFlora <zj18139624826@gmail.com>
  1 file changed, 43 insertions(+), 1 deletion(-)
 
 diff --git a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
-index aa46d48ae0..049a1a5a3e 100644
+index aa46d48..049a1a5 100644
 --- a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
 +++ b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
 @@ -63,6 +63,43 @@ return baseclass.extend({
@@ -70,5 +70,3 @@ index aa46d48ae0..049a1a5a3e 100644
  		];
  
  		if (tempinfo.tempinfo) {
--- 
-2.43.0

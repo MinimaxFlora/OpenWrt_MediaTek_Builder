@@ -1,6 +1,6 @@
-From 9a3933689ab7fff3689c8f5f655fbdafe2734f48 Mon Sep 17 00:00:00 2001
+From ef91f6c15cbe9b4dbb73b41b23eed8c3434881b3 Mon Sep 17 00:00:00 2001
 From: MinimaxFlora <zj18139624826@gmail.com>
-Date: Sat, 22 Aug 2026 00:04:04 +0800
+Date: Wed, 11 Nov 2026 21:39:53 +0800
 Subject: [PATCH] luci-mod-status: add network speed monitor
 
 Signed-off-by: MinimaxFlora <zj18139624826@gmail.com>
@@ -11,7 +11,7 @@ Signed-off-by: MinimaxFlora <zj18139624826@gmail.com>
 
 diff --git a/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/35_network_speed.js b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/35_network_speed.js
 new file mode 100644
-index 0000000000..9172289b4b
+index 0000000..9172289
 --- /dev/null
 +++ b/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/35_network_speed.js
 @@ -0,0 +1,80 @@
@@ -95,5 +95,3 @@ index 0000000000..9172289b4b
 +		return table;
 +	}
 +});
--- 
-2.43.0

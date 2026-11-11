@@ -1,7 +1,7 @@
-From a9d317aa12af81e7c829ce9a01abcd29cb9f8cc1 Mon Sep 17 00:00:00 2001
-From: sbwml <admin@cooluc.com>
-Date: Mon, 11 May 2026 15:40:54 +0800
-Subject: [PATCH 1/2] toolchain: gcc: add support for GCC-16
+From dff2a24d3f75ef8dfb6c520fc40f834312fc9ccd Mon Sep 17 00:00:00 2001
+From: MinimaxFlora <zj18139624826@gmail.com>
+Date: Wed, 11 Nov 2026 21:41:47 +0800
+Subject: [PATCH] toolchain: gcc: add support for GCC-16
 
 Signed-off-by: sbwml <admin@cooluc.com>
 ---
@@ -65,7 +65,7 @@ index d296249..68c91c1 100644
  
  config GCC_USE_GRAPHITE
 diff --git a/toolchain/gcc/Config.version b/toolchain/gcc/Config.version
-index 5960fe3..4f94ac7 100644
+index 9a67df6..767a661 100644
 --- a/toolchain/gcc/Config.version
 +++ b/toolchain/gcc/Config.version
 @@ -10,12 +10,17 @@ config GCC_VERSION_15
@@ -882,5 +882,3 @@ index 0000000..73bb1ad
 + }
 ++
 ++const struct host_hooks host_hooks = HOST_HOOKS_INITIALIZER;
--- 
-2.47.3
